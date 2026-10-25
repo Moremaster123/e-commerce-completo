@@ -1,0 +1,282 @@
+[
+  {
+    "model": "products.product",
+    "pk": 1,
+    "fields": {
+      "name": "Tinta Negra",
+      "description": "Llavero de tela tejida con ilustración manga en blanco y negro. Ligero, resistente y con argolla metálica.",
+      "price": "99.00",
+      "category": "Anime y manga",
+      "image": "llavero-01.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 2,
+    "fields": {
+      "name": "Racing Rojo",
+      "description": "Diseño negro con detalles en rojo inspirado en la cultura del automovilismo urbano. Tejido de alta densidad.",
+      "price": "119.00",
+      "category": "Streetwear",
+      "image": "llavero-02.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 3,
+    "fields": {
+      "name": "Vino Tinto",
+      "description": "Correa color vino con herraje metálico. Perfecta para llaves, mochilas o credenciales.",
+      "price": "139.00",
+      "category": "Streetwear",
+      "image": "llavero-03.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 4,
+    "fields": {
+      "name": "Mirada Salvaje",
+      "description": "Ilustración de una mirada intensa en estilo manga, tejida en blanco y negro con terminado resistente.",
+      "price": "99.00",
+      "category": "Anime y manga",
+      "image": "llavero-04.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 5,
+    "fields": {
+      "name": "Flores Grises",
+      "description": "Patrón de pequeñas figuras sobre fondo gris claro. Un detalle discreto para tus llaves.",
+      "price": "99.00",
+      "category": "Anime y manga",
+      "image": "llavero-05.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 6,
+    "fields": {
+      "name": "Urban Shop",
+      "description": "Etiqueta gris con letras verticales de estilo urbano. Compacta y fácil de llevar a todos lados.",
+      "price": "109.00",
+      "category": "Streetwear",
+      "image": "llavero-06.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 7,
+    "fields": {
+      "name": "Aqua Manga",
+      "description": "Ilustración en tonos turquesa con personaje de estilo manga. Colores vivos que no se desgastan.",
+      "price": "109.00",
+      "category": "Anime y manga",
+      "image": "llavero-07.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 8,
+    "fields": {
+      "name": "Amarillo Pop",
+      "description": "Llavero amarillo con personaje ilustrado y lettering vertical. Alegre y llamativo.",
+      "price": "109.00",
+      "category": "Anime y manga",
+      "image": "llavero-08.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 9,
+    "fields": {
+      "name": "Retrato Monocromo",
+      "description": "Retrato estilo manga en blanco y negro, con trazos marcados y acabado de tela tejida.",
+      "price": "99.00",
+      "category": "Anime y manga",
+      "image": "llavero-09.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 10,
+    "fields": {
+      "name": "Kanji Gris",
+      "description": "Correa gris con caracteres japoneses y mosquetón metálico. Estilo minimalista y resistente.",
+      "price": "129.00",
+      "category": "Streetwear",
+      "image": "llavero-10.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 11,
+    "fields": {
+      "name": "Send It",
+      "description": "Correa naranja con letras blancas y mosquetón metálico. Para quienes siempre van con todo.",
+      "price": "149.00",
+      "category": "Streetwear",
+      "image": "llavero-11.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 12,
+    "fields": {
+      "name": "Fake Taxi",
+      "description": "Amarillo taxi con letras negras al estilo de las calles. Incluye mosquetón de metal.",
+      "price": "149.00",
+      "category": "Streetwear",
+      "image": "llavero-12.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 13,
+    "fields": {
+      "name": "Authentic Edition",
+      "description": "Correa negra con lettering en blanco y amarillo. Edición con herraje metálico reforzado.",
+      "price": "159.00",
+      "category": "Streetwear",
+      "image": "llavero-13.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 14,
+    "fields": {
+      "name": "Loop One Doble",
+      "description": "Correa gris con dos mosquetones, para separar tus llaves o compartirlas.",
+      "price": "169.00",
+      "category": "Streetwear",
+      "image": "llavero-14.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 15,
+    "fields": {
+      "name": "Rojo Kanji",
+      "description": "Correa roja con texto japonés en blanco. Color intenso que destaca en cualquier llavero.",
+      "price": "149.00",
+      "category": "Streetwear",
+      "image": "llavero-15.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 16,
+    "fields": {
+      "name": "Night Kids",
+      "description": "Correa negra con letras en blanco, de aire nocturno. Combina con todo.",
+      "price": "149.00",
+      "category": "Streetwear",
+      "image": "llavero-16.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 17,
+    "fields": {
+      "name": "Retro 90s",
+      "description": "Correa morada con tipografía retro inspirada en los años noventa y mosquetón metálico.",
+      "price": "149.00",
+      "category": "Streetwear",
+      "image": "llavero-17.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 18,
+    "fields": {
+      "name": "Shut Up Amarillo",
+      "description": "Correa negra con franja amarilla y letras llamativas. Resistente y con mucha personalidad.",
+      "price": "159.00",
+      "category": "Streetwear",
+      "image": "llavero-18.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 19,
+    "fields": {
+      "name": "Negro y Amarillo",
+      "description": "Combinación clásica de negro y amarillo con detalles en blanco. Herraje metálico incluido.",
+      "price": "159.00",
+      "category": "Streetwear",
+      "image": "llavero-19.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  },
+  {
+    "model": "products.product",
+    "pk": 20,
+    "fields": {
+      "name": "Héroe Nocturno",
+      "description": "Ilustración de personaje en tonos oscuros con acentos de color. Edición especial de la tienda.",
+      "price": "119.00",
+      "category": "Anime y manga",
+      "image": "llavero-20.jpeg",
+      "stock": 10,
+      "active": true,
+      "created_at": "2026-10-24T00:00:00Z"
+    }
+  }
+]
