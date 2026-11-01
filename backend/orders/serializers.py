@@ -54,6 +54,7 @@ class OrderCreateSerializer(serializers.Serializer):
             subtotal=subtotal,
             shipping=shipping,
             total=subtotal + shipping,
+            status='pending' if billing.method == 'mercadopago' else 'paid',
         )
         for item in validated_data['items']:
             product = item['product']
@@ -79,6 +80,9 @@ class OrderSerializer(serializers.ModelSerializer):
             'id': order.code,
             'date': order.created_at.isoformat(),
             'status': order.get_status_display(),
+            'statusCode': order.status,
+            'paymentStatus': order.mp_status or None,
+            'checkoutUrl': order.mp_checkout_url if order.status == 'pending' and order.mp_checkout_url else None,
             'customer': public_user(order.user),
             'items': [
                 {'id': item.product_id, 'name': item.name, 'price': float(item.price), 'quantity': item.quantity}

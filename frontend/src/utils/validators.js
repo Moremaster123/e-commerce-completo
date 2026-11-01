@@ -1,7 +1,6 @@
 import { onlyDigits } from './payment';
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const EXPIRY_REGEX = /^(0[1-9]|1[0-2])\/\d{2}$/;
 
 export const isValidEmail = (email) => EMAIL_REGEX.test(email.trim());
 
@@ -88,30 +87,6 @@ export const validateAddress = (values) => {
 
     if (onlyDigits(values.phone).length !== 10) {
         errors.phone = 'El teléfono debe tener 10 dígitos.';
-    }
-
-    return errors;
-};
-
-export const validatePayment = (values) => {
-    const errors = {};
-
-    if (!values.paymentMethod) {
-        errors.paymentMethod = 'Elige un método de pago.';
-    }
-
-    if (values.paymentMethod === 'card') {
-        if (onlyDigits(values.cardNumber).length !== 16) {
-            errors.cardNumber = 'El número de tarjeta debe tener 16 dígitos.';
-        }
-
-        if (!EXPIRY_REGEX.test(values.cardExpiry.trim())) {
-            errors.cardExpiry = 'Usa el formato MM/AA.';
-        }
-
-        if (!/^\d{3,4}$/.test(values.cardCvv.trim())) {
-            errors.cardCvv = 'El CVV debe tener 3 o 4 dígitos.';
-        }
     }
 
     return errors;

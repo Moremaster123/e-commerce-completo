@@ -4,7 +4,7 @@ from rest_framework.routers import DefaultRouter
 from addresses.views import AddressViewSet
 from analytics.views import SummaryView
 from billing.views import BillingProfileViewSet
-from orders.views import OrderViewSet
+from orders.views import MercadoPagoWebhookView, OrderViewSet
 from products.views import ProductViewSet
 
 router = DefaultRouter()
@@ -16,4 +16,5 @@ router.register('orders', OrderViewSet, basename='order')
 urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('analytics/summary/', SummaryView.as_view(), name='analytics-summary'),
+    path('payments/webhook/', MercadoPagoWebhookView.as_view(), name='mercadopago-webhook'),
 ] + router.urls

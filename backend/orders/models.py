@@ -12,6 +12,7 @@ SHIPPING_COST = Decimal('59')
 
 STATUS_CHOICES = [
     ('created', 'Creada'),
+    ('pending', 'Pendiente de pago'),
     ('paid', 'Pagada'),
     ('shipped', 'Enviada'),
     ('cancelled', 'Cancelada'),
@@ -31,6 +32,10 @@ class Order(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2)
     shipping = models.DecimalField(max_digits=10, decimal_places=2)
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    mp_preference_id = models.CharField(max_length=100, blank=True)
+    mp_checkout_url = models.URLField(max_length=500, blank=True)
+    mp_payment_id = models.CharField(max_length=50, blank=True)
+    mp_status = models.CharField(max_length=30, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     class Meta:

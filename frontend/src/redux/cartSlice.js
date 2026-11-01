@@ -1,8 +1,10 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+import { loadCart } from '../utils/cartStorage';
+
 const cartSlice = createSlice({
     name: 'cart',
-    initialState: { items: [] },
+    initialState: () => ({ items: loadCart() }),
     reducers: {
         addToCart: (state, action) => {
             const existing = state.items.find((item) => item.id === action.payload.id);

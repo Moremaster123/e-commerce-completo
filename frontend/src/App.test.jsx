@@ -11,6 +11,9 @@ const serverOrder = {
     id: 'RX-ABC123',
     date: '2026-10-24T19:00:00-06:00',
     status: 'Pagada',
+    statusCode: 'paid',
+    paymentStatus: 'approved',
+    checkoutUrl: null,
     customer: sampleUser,
     items: [{ id: 1, name: 'Tinta Negra', price: 99, quantity: 2 }],
     subtotal: 198,
@@ -26,7 +29,7 @@ const serverOrder = {
         zip: '72000',
         phone: '2221234567',
     },
-    payment: { id: 1, method: 'card', label: 'Tarjeta de crédito o débito', last4: '4242' },
+    payment: { id: 1, method: 'mercadopago', label: 'Mercado Pago', last4: null },
 };
 
 const readyToPay = {
@@ -41,13 +44,6 @@ const fillAddress = async (user) => {
     await user.type(screen.getByLabelText('Ciudad'), 'Puebla');
     await user.type(screen.getByLabelText('Estado'), 'Puebla');
     await user.type(screen.getByLabelText('Teléfono (10 dígitos)'), '2221234567');
-};
-
-const savePayment = async (user) => {
-    await user.type(screen.getByLabelText('Número de tarjeta'), '4242 4242 4242 4242');
-    await user.type(screen.getByLabelText('Vencimiento'), '12/28');
-    await user.type(screen.getByLabelText('CVV'), '123');
-    await user.click(screen.getByRole('button', { name: 'Guardar método de pago' }));
 };
 
 describe('App', () => {
@@ -98,37 +94,31 @@ describe('App', () => {
         ).toBeInTheDocument();
     });
 
-    it('no deja confirmar la compra sin guardar el método de pago', async () => {
+    it('no deja ir a pagar sin la dirección de envío', async () => {
         const user = userEvent.setup();
         renderWithProviders(<App />, { route: '/checkout', preloadedState: readyToPay });
 
-        await fillAddress(user);
-        await user.click(screen.getByRole('button', { name: /Confirmar compra/ }));
+        await user.click(screen.getByRole('button', { name: /con Mercado Pago/ }));
 
-        expect(
-            screen.getByText('Guarda tu método de pago antes de confirmar la compra.')
-        ).toBeInTheDocument();
+        expect(screen.getByText('Revisa los campos marcados en rojo.')).toBeInTheDocument();
+        expect(api.post).not.toHaveBeenCalled();
     });
 
-    it('completa la compra en el backend y muestra la confirmación', async () => {
+    it('crea el pedido en el backend y muestra la confirmación', async () => {
         api.post.mockResolvedValue({ data: serverOrder });
+        api.get.mockResolvedValue({ data: serverOrder });
 
         const user = userEvent.setup();
         const { store } = renderWithProviders(<App />, { route: '/checkout', preloadedState: readyToPay });
 
         await fillAddress(user);
-        await savePayment(user);
-
-        expect(screen.getByRole('status')).toHaveTextContent(
-            'Método de pago guardado: Tarjeta de crédito o débito terminada en 4242'
-        );
-
-        await user.click(screen.getByRole('button', { name: /Confirmar compra/ }));
+        await user.click(screen.getByRole('button', { name: /con Mercado Pago/ }));
 
         expect(await screen.findByRole('heading', { name: '¡Gracias por tu compra, Ana!' })).toBeInTheDocument();
+        expect(api.get).toHaveBeenCalledWith('/orders/RX-ABC123/');
         expect(screen.getByText('RX-ABC123')).toBeInTheDocument();
         expect(screen.getByText('Reforma 10, Centro')).toBeInTheDocument();
-        expect(screen.getByText('$257.00')).toBeInTheDocument();
+        expect(screen.getByText('Mercado Pago')).toBeInTheDocument();
         expect(store.getState().cart.items).toEqual([]);
         expect(api.post).toHaveBeenCalledWith('/orders/', {
             items: [{ product: 1, quantity: 2 }],
@@ -141,7 +131,7 @@ describe('App', () => {
                 zip: '72000',
                 phone: '2221234567',
             },
-            payment: { method: 'card', last4: '4242' },
+            payment: { method: 'mercadopago' },
         });
     });
 
@@ -152,10 +142,15 @@ describe('App', () => {
         const { store } = renderWithProviders(<App />, { route: '/checkout', preloadedState: readyToPay });
 
         await fillAddress(user);
-        await savePayment(user);
-        await user.click(screen.getByRole('button', { name: /Confirmar compra/ }));
+        await user.click(screen.getByRole('button', { name: /con Mercado Pago/ }));
 
         expect(await screen.findByText('No hay suficiente stock de Tinta Negra.')).toBeInTheDocument();
         expect(store.getState().cart.items).toHaveLength(1);
+    });
+
+    it('pide iniciar sesión para ver la confirmación', () => {
+        renderWithProviders(<App />, { route: '/confirmacion?pedido=RX-ABC123' });
+
+        expect(screen.getByRole('heading', { name: 'Ingresar' })).toBeInTheDocument();
     });
 });

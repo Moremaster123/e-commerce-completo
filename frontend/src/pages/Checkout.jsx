@@ -8,8 +8,9 @@ import { selectUser } from '../redux/authSlice';
 import { placeOrder } from '../redux/orderSlice';
 import { formatPrice } from '../utils/formatPrice';
 import { calculateShipping } from '../utils/shipping';
-import { validateAddress, validatePayment } from '../utils/validators';
-import { PAYMENT_METHODS, getPaymentLabel, onlyDigits } from '../utils/payment';
+import { validateAddress } from '../utils/validators';
+import { onlyDigits } from '../utils/payment';
+import { redirectTo } from '../utils/redirect';
 import api from '../api/client';
 import { getErrorMessage } from '../api/errors';
 import { Field, FormCard, FormError, FormNotice, SubmitButton } from '../components/FormElements';
@@ -52,62 +53,26 @@ const FieldRow = styled.div`
     }
 `;
 
-const PaymentGroup = styled.fieldset`
+const MercadoPagoBox = styled.div`
     display: flex;
     flex-direction: column;
-    gap: 0.6rem;
-    margin: 0;
-    padding: 0;
-    border: none;
-`;
-
-const PaymentOption = styled.label`
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    padding: 0.7rem 0.8rem;
-    border: 2px solid ${({ $selected, theme }) => ($selected ? theme.colors.primary : theme.colors.border)};
-    border-radius: 8px;
-    cursor: pointer;
-`;
-
-const ErrorText = styled.span`
-    font-size: 0.82rem;
-    color: ${({ theme }) => theme.colors.danger};
-`;
-
-const SecondaryButton = styled.button`
-    align-self: flex-start;
-    padding: 0.6rem 1.1rem;
+    gap: 0.3rem;
+    padding: 0.9rem 1rem;
     border: 2px solid ${({ theme }) => theme.colors.primary};
     border-radius: 8px;
-    background: transparent;
-    color: ${({ theme }) => theme.colors.primary};
-    font-size: 0.95rem;
-    font-weight: 600;
-    cursor: pointer;
 
-    &:hover {
-        background: ${({ theme }) => theme.colors.primary};
-        color: #fff;
+    strong {
+        color: ${({ theme }) => theme.colors.primaryDark};
     }
-`;
-
-const SavedPayment = styled.div`
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.8rem 0.9rem;
-    border: 1px solid ${({ theme }) => theme.colors.success};
-    border-radius: 8px;
-    background: #edf7ee;
 
     p {
         margin: 0;
+        font-size: 0.92rem;
+        color: ${({ theme }) => theme.colors.muted};
     }
 `;
+
+const TEST_MODE = import.meta.env.VITE_PAGOS_PRUEBA !== '0';
 
 const Summary = styled.aside`
     background: ${({ theme }) => theme.colors.surface};
@@ -181,18 +146,10 @@ export default function Checkout() {
         state: '',
         zip: '',
         phone: '',
-        paymentMethod: 'card',
-        cardNumber: '',
-        cardExpiry: '',
-        cardCvv: '',
     });
-    const [addressErrors, setAddressErrors] = useState({});
-    const [paymentErrors, setPaymentErrors] = useState({});
-    const [savedPayment, setSavedPayment] = useState(null);
+    const [errors, setErrors] = useState({});
     const [submitting, setSubmitting] = useState(false);
     const [orderError, setOrderError] = useState('');
-
-    const errors = { ...addressErrors, ...paymentErrors };
 
     if (items.length === 0) {
         return (
@@ -214,39 +171,15 @@ export default function Checkout() {
         setValues((previous) => ({ ...previous, [name]: value }));
     };
 
-    const handleSavePayment = () => {
-        const validation = validatePayment(values);
-
-        setPaymentErrors(validation);
-
-        if (Object.keys(validation).length > 0) {
-            return;
-        }
-
-        const isCard = values.paymentMethod === 'card';
-
-        // Pago simulado: de la tarjeta solo se conservan los últimos 4 dígitos
-        setSavedPayment({
-            method: values.paymentMethod,
-            label: getPaymentLabel(values.paymentMethod),
-            last4: isCard ? onlyDigits(values.cardNumber).slice(-4) : null,
-        });
-        setValues((previous) => ({ ...previous, cardNumber: '', cardExpiry: '', cardCvv: '' }));
-    };
-
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        const addressValidation = validateAddress(values);
-        const paymentValidation = savedPayment
-            ? {}
-            : { paymentMethod: 'Guarda tu método de pago antes de confirmar la compra.' };
+        const validation = validateAddress(values);
 
-        setAddressErrors(addressValidation);
-        setPaymentErrors(paymentValidation);
+        setErrors(validation);
         setOrderError('');
 
-        if (Object.keys(addressValidation).length > 0 || !savedPayment) {
+        if (Object.keys(validation).length > 0) {
             return;
         }
 
@@ -261,7 +194,7 @@ export default function Checkout() {
                 zip: values.zip.trim(),
                 phone: onlyDigits(values.phone),
             },
-            payment: { method: savedPayment.method, last4: savedPayment.last4 },
+            payment: { method: 'mercadopago' },
         };
 
         setSubmitting(true);
@@ -271,7 +204,12 @@ export default function Checkout() {
 
             dispatch(placeOrder(order));
             dispatch(clearCart());
-            navigate('/confirmacion', { replace: true });
+
+            if (order.checkoutUrl) {
+                redirectTo(order.checkoutUrl);
+            } else {
+                navigate(`/confirmacion?pedido=${order.id}`, { replace: true });
+            }
         } catch (error) {
             setOrderError(getErrorMessage(error));
             setSubmitting(false);
@@ -367,88 +305,20 @@ export default function Checkout() {
 
                     <SectionTitle>Método de pago</SectionTitle>
 
-                    <FormNotice>Pago simulado: no se hace ningún cargo real ni se guardan datos de tarjeta.</FormNotice>
+                    <MercadoPagoBox>
+                        <strong>Mercado Pago</strong>
+                        <p>Paga con tarjeta de crédito o débito, en efectivo en OXXO o por transferencia SPEI.</p>
+                        <p>Te llevaremos a Mercado Pago para completar el pago de forma segura.</p>
+                    </MercadoPagoBox>
 
-                    {savedPayment && (
-                        <SavedPayment role="status">
-                            <p>
-                                <strong>Método de pago guardado:</strong> {savedPayment.label}
-                                {savedPayment.last4 && ` terminada en ${savedPayment.last4}`}
-                            </p>
-                            <SecondaryButton type="button" onClick={() => setSavedPayment(null)}>
-                                Cambiar
-                            </SecondaryButton>
-                        </SavedPayment>
-                    )}
-
-                    {!savedPayment && (
-                        <PaymentGroup aria-label="Método de pago">
-                            {PAYMENT_METHODS.map((method) => (
-                                <PaymentOption key={method.id} $selected={values.paymentMethod === method.id}>
-                                    <input
-                                        type="radio"
-                                        name="paymentMethod"
-                                        value={method.id}
-                                        checked={values.paymentMethod === method.id}
-                                        onChange={handleChange}
-                                    />
-                                    {method.label}
-                                </PaymentOption>
-                            ))}
-                            {errors.paymentMethod && <ErrorText role="alert">{errors.paymentMethod}</ErrorText>}
-                        </PaymentGroup>
-                    )}
-
-                    {!savedPayment && values.paymentMethod === 'card' && (
-                        <>
-                            <Field
-                                id="cardNumber"
-                                label="Número de tarjeta"
-                                type="text"
-                                inputMode="numeric"
-                                maxLength={19}
-                                placeholder="1234 5678 9012 3456"
-                                autoComplete="cc-number"
-                                value={values.cardNumber}
-                                onChange={handleChange}
-                                error={errors.cardNumber}
-                            />
-
-                            <FieldRow>
-                                <Field
-                                    id="cardExpiry"
-                                    label="Vencimiento"
-                                    type="text"
-                                    maxLength={5}
-                                    placeholder="MM/AA"
-                                    autoComplete="cc-exp"
-                                    value={values.cardExpiry}
-                                    onChange={handleChange}
-                                    error={errors.cardExpiry}
-                                />
-                                <Field
-                                    id="cardCvv"
-                                    label="CVV"
-                                    type="password"
-                                    inputMode="numeric"
-                                    maxLength={4}
-                                    autoComplete="cc-csc"
-                                    value={values.cardCvv}
-                                    onChange={handleChange}
-                                    error={errors.cardCvv}
-                                />
-                            </FieldRow>
-                        </>
-                    )}
-
-                    {!savedPayment && (
-                        <SecondaryButton type="button" onClick={handleSavePayment}>
-                            Guardar método de pago
-                        </SecondaryButton>
+                    {TEST_MODE && (
+                        <FormNotice>
+                            Modo de prueba: usa las tarjetas de prueba de Mercado Pago. No se hace ningún cargo real.
+                        </FormNotice>
                     )}
 
                     <SubmitButton type="submit" disabled={submitting}>
-                        Confirmar compra por {formatPrice(total)}
+                        {submitting ? 'Conectando con Mercado Pago…' : `Pagar ${formatPrice(total)} con Mercado Pago`}
                     </SubmitButton>
                 </FormCard>
 

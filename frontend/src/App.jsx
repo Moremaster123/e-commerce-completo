@@ -28,7 +28,14 @@ function App() {
                         </RequireAuth>
                     }
                 />
-                <Route path="/confirmacion" element={<Confirmation />} />
+                <Route
+                    path="/confirmacion"
+                    element={
+                        <RequireAuth>
+                            <Confirmation />
+                        </RequireAuth>
+                    }
+                />
             </Routes>
 
             <Footer />

@@ -5,7 +5,6 @@ import {
     validateLogin,
     validateRegister,
     validateAddress,
-    validatePayment,
 } from './validators';
 
 const validAddress = {
@@ -76,33 +75,5 @@ describe('validateAddress', () => {
 
         expect(errors.zip).toBe('El código postal debe tener 5 dígitos.');
         expect(errors.phone).toBe('El teléfono debe tener 10 dígitos.');
-    });
-});
-
-describe('validatePayment', () => {
-    it('no pide datos de tarjeta para otros métodos', () => {
-        expect(validatePayment({ paymentMethod: 'transfer' })).toEqual({});
-    });
-
-    it('valida los datos de la tarjeta', () => {
-        const errors = validatePayment({
-            paymentMethod: 'card',
-            cardNumber: '1234',
-            cardExpiry: '13/28',
-            cardCvv: '1',
-        });
-
-        expect(Object.keys(errors)).toEqual(['cardNumber', 'cardExpiry', 'cardCvv']);
-    });
-
-    it('acepta una tarjeta con espacios en el número', () => {
-        const errors = validatePayment({
-            paymentMethod: 'card',
-            cardNumber: '4242 4242 4242 4242',
-            cardExpiry: '12/28',
-            cardCvv: '123',
-        });
-
-        expect(errors).toEqual({});
     });
 });

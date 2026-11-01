@@ -1,3 +1,5 @@
+const UNEXPECTED_ERROR = 'Ocurrió un error inesperado. Intenta de nuevo.';
+
 export const CONNECTION_ERROR = 'No pudimos conectar con la tienda. Revisa tu conexión e intenta de nuevo.';
 
 const firstMessage = (value) => {
@@ -23,5 +25,9 @@ export const getErrorMessage = (error, fallback = CONNECTION_ERROR) => {
         return fallback;
     }
 
-    return firstMessage(error.response.data) || 'Ocurrió un error inesperado. Intenta de nuevo.';
+    if (typeof error.response.data !== 'object') {
+        return UNEXPECTED_ERROR;
+    }
+
+    return firstMessage(error.response.data) || UNEXPECTED_ERROR;
 };
